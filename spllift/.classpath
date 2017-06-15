@@ -2,12 +2,12 @@
 <classpath>
 	<classpathentry excluding="soot/spl/ifds/FMConstraintFactory.java|soot/spl/ifds/Main.java" kind="src" path="src">
 		<attributes>
-			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="C:/Users/Max/Tools/z3-4.4.1-x64-win/bin"/>
+			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="/Users/mvelezce/Documents/Programming/Java/Projects/Lotrack/z3-4.4.1-x64-osx-10.11/bin"/>
 		</attributes>
 	</classpathentry>
 	<classpathentry combineaccessrules="false" kind="src" path="/heros"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/soot"/>
-	<classpathentry kind="lib" path="C:/Users/Max/Tools/z3-4.4.1-x64-win/bin/com.microsoft.z3.jar"/>
+	<classpathentry kind="lib" path="/Users/mvelezce/Documents/Programming/Java/Projects/Lotrack/z3-4.4.1-x64-osx-10.11/bin/com.microsoft.z3.jar"/>
 	<classpathentry kind="lib" path="lib/commons-lang3-3.3.2.jar"/>
 	<classpathentry kind="lib" path="lib/guava-16.0.1.jar"/>
 	<classpathentry kind="lib" path="lib/mongo-java-driver-3.0.0.jar"/>

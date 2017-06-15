@@ -2291,6 +2291,84 @@ public class LoadTimeTests extends AbstractBenchmark {
 //			System.out.println(constraintsChecked + " Constraints checked.");
 //		}
 	}	
+		
+	@Test
+    public void dummy() throws IOException {
+        final String sep = System.getProperty("path.separator");
+        String name = "dummy";
+    	File f = new File("/Users/mvelezce/Documents/Programming/Java/Projects/performance-mapper-evaluation/original/dummy/out/production/dummy/");
+    	
+    	assertTrue(f.exists());
+
+    	appPath = f.getCanonicalPath();
+    	libPath = System.getProperty("java.home") + File.separator + "lib" + File.separator + "rt.jar";
+    	
+		LoadTimeInfoflow result = new LoadTimeInfoflow();
+		result.setCallgraphAlgorithm(CallgraphAlgorithm.CHA);
+		
+		EasyTaintWrapper easyWrapper = new EasyTaintWrapper(new File("EasyTaintWrapperSource.txt"));
+		result.setTaintWrapper(easyWrapper);
+		
+    	Infoflow.setDebug(true);
+    	LoadTimeConfigForTest testConfig = new LoadTimeConfigForTest();
+    	result.setSootConfig(testConfig);
+    	
+    	LoadTimeInfoflow infoflow = result;
+    	
+		List<String> epoints = new ArrayList<String>();
+		epoints.add("<edu.cmu.cs.mvelezce.Feature: void main(java.lang.String[])>");
+		
+		checkConstraints(infoflow, epoints, name);
+		
+//		try(MongoLoader loader = new MongoLoader()) { 
+//			loader.saveResults(infoflow, name, "/Users/mvelezce/Documents/Programming/Java/Projects/");
+//		}
+		
+//		Config conf = ConfigFactory.load().getConfig(name);
+//		try(TestHelper testHelper = new TestHelper()) {
+//			int constraintsChecked = testHelper.checkResults(conf, name);
+//			System.out.println(constraintsChecked + " Constraints checked.");
+//		}
+	}	
+	
+	@Test
+    public void jarchivelib() throws IOException {
+        final String sep = System.getProperty("path.separator");
+        String name = "jarchivelib";
+    	File f = new File("/Users/mvelezce/Documents/Programming/Java/Projects/performance-mapper-evaluation/original/jarchivelib/target/classes/");
+    	
+    	assertTrue(f.exists());
+
+    	appPath = f.getCanonicalPath();
+    	libPath = System.getProperty("java.home") + File.separator + "lib" + File.separator + "rt.jar";
+    	
+		LoadTimeInfoflow result = new LoadTimeInfoflow();
+		result.setCallgraphAlgorithm(CallgraphAlgorithm.CHA);
+		
+		EasyTaintWrapper easyWrapper = new EasyTaintWrapper(new File("EasyTaintWrapperSource.txt"));
+		result.setTaintWrapper(easyWrapper);
+		
+    	Infoflow.setDebug(true);
+    	LoadTimeConfigForTest testConfig = new LoadTimeConfigForTest();
+    	result.setSootConfig(testConfig);
+    	
+    	LoadTimeInfoflow infoflow = result;
+    	
+		List<String> epoints = new ArrayList<String>();
+		epoints.add("<edu.cmu.cs.mvelezce.Test: void main(java.lang.String[])>");
+		
+		checkConstraints(infoflow, epoints, name);
+		
+//		try(MongoLoader loader = new MongoLoader()) { 
+//			loader.saveResults(infoflow, name, "/Users/mvelezce/Documents/Programming/Java/Projects/");
+//		}
+		
+//		Config conf = ConfigFactory.load().getConfig(name);
+//		try(TestHelper testHelper = new TestHelper()) {
+//			int constraintsChecked = testHelper.checkResults(conf, name);
+//			System.out.println(constraintsChecked + " Constraints checked.");
+//		}
+	}	
 	
 	@Test
     public void remoteengine() throws IOException {
