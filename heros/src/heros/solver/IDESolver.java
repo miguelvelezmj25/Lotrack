@@ -82,6 +82,9 @@ import com.google.common.collect.Table.Cell;
  */
 public class IDESolver<N,D,M,V,I extends InterproceduralCFG<N, M>> {
 	
+	private Map<N, Set<EdgeFunction<V>>> callSitesToUnioned = new HashMap<>();
+	
+	
 	public static CacheBuilder<Object, Object> DEFAULT_CACHE_BUILDER = CacheBuilder.newBuilder().concurrencyLevel(Runtime.getRuntime().availableProcessors()).initialCapacity(10000).softValues();
 	
     protected static final Logger logger = LoggerFactory.getLogger(IDESolver.class);
@@ -442,27 +445,44 @@ public class IDESolver<N,D,M,V,I extends InterproceduralCFG<N, M>> {
 	 * @param edge an edge whose target node resembles a method call
 	 */
 	private List<NewPathEdgeProcessingTask> processCall(PathEdge<N,D> edge, Collection<N> joinPoints) {
+		System.out.println("####### START PROCESS CALL");
+		System.out.println("edge= " + edge);
+		System.out.println("joinPoints= " + joinPoints);
+		
 		final D d1 = edge.factAtSource();
+		System.out.println("edge.factAtSource= " + d1);
 		final N n = edge.getTarget(); // a call node; line 14...
-
+		System.out.println("edge.getTarget= " + n);
+		
 		final D d2 = edge.factAtTarget();
+		System.out.println("edge.factAtTarget= " + d2);
+		
 		EdgeFunction<V> f = jumpFunction(edge);
+		System.out.println("edgeFunction= " + f);
+		
 		Collection<N> returnSiteNs = icfg.getReturnSitesOfCallAt(n);
+		System.out.println("returnSites= " +returnSiteNs);
 		
 		NewPathEdgeProcessingTask task = null;
 		List<NewPathEdgeProcessingTask> tasks = new LinkedList<NewPathEdgeProcessingTask>();
 		
 		//for each possible callee
 		Collection<M> callees = icfg.getCalleesOfCallAt(n);
+		System.out.println("callees= " + callees);
+		
 		for(M sCalledProcN: callees) { //still line 14
-			
 			//compute the call-flow function
+			System.out.println("####### START CALL FLOW FUNCTION");
+			System.out.println("callee= " + sCalledProcN);
 			FlowFunction<D> function = flowFunctions.getCallFlowFunction(n, sCalledProcN);
 			flowFunctionConstructionCount++;
-			Set<D> res = computeCallFlowFunction(function, d1, d2);			
+			Set<D> res = computeCallFlowFunction(function, d1, d2);	
+			System.out.println("res " + res);
+			System.out.println("####### END CALL FLOW FUNCTION\n");
 			
 			//for each callee's start point(s)
 			Collection<N> startPointsOf = icfg.getStartPointsOf(sCalledProcN);
+			System.out.println("startPoints= " + startPointsOf);
 			for(N sP: startPointsOf) {
 				
 				if(enableNeo4Jlogging) neo4j.logEdge(sP, edge, "processCall");
@@ -472,7 +492,18 @@ public class IDESolver<N,D,M,V,I extends InterproceduralCFG<N, M>> {
 				for(D d3: res) {
 					//create initial self-loop
 					// @TODO Changes fourth parameter -> check again
-					task = propagate(d3, sP, d3, f, n, false, joinPoints); //line 15
+					
+					
+					if(f.toString().equals("true") && sCalledProcN.toString().equals("<edu.cmu.cs.mvelezce.Sleep0: void m1()>")) {
+//						task = propagateFAKE(d3, sP, d3, f, n, false, joinPoints); //line 15
+						task = propagate(d3, sP, d3, f, n, false, joinPoints); //line 15
+//						task = null;
+					}
+					else {					
+						task = propagate(d3, sP, d3, f, n, false, joinPoints); //line 15
+//						task = propagateUnion(d3, sP, d3, f, n, false, joinPoints); //line 15
+					}
+					System.out.println("task " + task);
 					if(task != null) {
 						tasks.add(task);
 					}
@@ -497,19 +528,25 @@ public class IDESolver<N,D,M,V,I extends InterproceduralCFG<N, M>> {
 						//for each return site
 						for(N retSiteN: returnSiteNs) {					
 							//compute return-flow function
+							System.out.println("####### START PROCESS CALL GET RETURN FLOW");
 							FlowFunction<D> retFunction = flowFunctions.getReturnFlowFunction(n, sCalledProcN, eP, retSiteN);
 							flowFunctionConstructionCount++;
 							//for each target value of the function
 							for(D d5: computeReturnFlowFunction(retFunction, d4, n, Collections.singleton(d2))) {
 								//update the caller-side summary function
+								System.out.println("####### START PROCESS CALL GET CALL EDGE");
 								EdgeFunction<V> f4 = edgeFunctions.getCallEdgeFunction(n, d2, sCalledProcN, d3);
+								System.out.println("####### START PROCESS CALL GET RETURN EDGE");
 								EdgeFunction<V> f5 = edgeFunctions.getReturnEdgeFunction(n, sCalledProcN, eP, d4, retSiteN, d5);
-								EdgeFunction<V> fPrime = f4.composeWith(fCalleeSummary).composeWith(f5);							
+								EdgeFunction<V> fPrime = f4.composeWith(fCalleeSummary).composeWith(f5);				
 								task = propagate(d1, retSiteN, d5, f.composeWith(fPrime), n, false, joinPoints);
+//								task = propagateUnion(d1, retSiteN, d5, f.composeWith(fPrime), n, false, joinPoints);
+								System.out.println("####### END PROCESS CALL GET CALL EDGE GET RETURN EDGE\n");
 								if(task != null) {
 									tasks.add(task);
 								}
 							}
+							System.out.println("####### END PROCESS CALL RETURN FLOW\n");
 						}
 					}
 				}		
@@ -520,15 +557,19 @@ public class IDESolver<N,D,M,V,I extends InterproceduralCFG<N, M>> {
 		for (N returnSiteN : returnSiteNs) {
 			if(enablePGSQLlogging) pgsql.logEdge(returnSiteN, edge, "returnSite", icfg);
 			
+			System.out.println("####### START PROCESS CALL GET CALL TO RETURN FLOW");
 			FlowFunction<D> callToReturnFlowFunction = flowFunctions.getCallToReturnFlowFunction(n, returnSiteN);
 			flowFunctionConstructionCount++;
 			for(D d3: computeCallToReturnFlowFunction(callToReturnFlowFunction, d1, d2)) {
+				System.out.println("####### START PROCESS CALL GET CALL TO RETURN EDGE");
 				EdgeFunction<V> edgeFnE = edgeFunctions.getCallToReturnEdgeFunction(n, d2, returnSiteN, d3);
 				task = propagate(d1, returnSiteN, d3, f.composeWith(edgeFnE), n, false, joinPoints);
+				System.out.println("####### END PROCESS CALL GET CALL TO RETURN EDGE\n");
 				if(task != null) {
 					tasks.add(task);
 				}
 			}
+			System.out.println("####### END PROCESS CALL GET CALL TO RETURN FLOW\n");
 		}
 		
 		return tasks;
@@ -615,14 +656,21 @@ public class IDESolver<N,D,M,V,I extends InterproceduralCFG<N, M>> {
 				for(D d4: entry.getValue()) {
 					
 					Collection<Entry<D, EdgeFunction<V>>> valAndFuncs = jumpFn.reverseLookup(c,d4);
+					System.out.println("valandfuncs " + valAndFuncs.size());
+					System.out.println("valandfuncs " + valAndFuncs);
 					
 					//for each target value at the return site
 					//line 23
 					for(D d5: targets) {
 						//compute composed function
+						System.out.println("####### START PROCESS EXIT GET CALL EDGE");
 						EdgeFunction<V> f4 = edgeFunctions.getCallEdgeFunction(c, d4, icfg.getMethodOf(n), d1);
+						System.out.println("f4 " + f4);
+						System.out.println("####### START PROCESS EXIT GET RETURN EDGE");
 						EdgeFunction<V> f5 = edgeFunctions.getReturnEdgeFunction(c, icfg.getMethodOf(n), n, d2, retSiteC, d5);
+						System.out.println("f5 " + f5);
 						EdgeFunction<V> fPrime = f4.composeWith(f).composeWith(f5);
+						System.out.println("FPrime " + fPrime);
 						//for each jump function coming into the call, propagate to return site using the composed function
 						//synchronized (jumpFn) { // some other thread might change jumpFn on the way
 							for(Map.Entry<D,EdgeFunction<V>> valAndFunc: valAndFuncs) {
@@ -635,6 +683,8 @@ public class IDESolver<N,D,M,V,I extends InterproceduralCFG<N, M>> {
 									}
 								}
 							}
+							
+							System.out.println("####### END PROCESS EXIT GET CALL EDGE GET RETURN EDGE\n");
 						//}
 					}
 				}
@@ -734,12 +784,14 @@ public class IDESolver<N,D,M,V,I extends InterproceduralCFG<N, M>> {
 			Set<D> res = computeNormalFlowFunction(flowFunction, d1, d2);
 
 			for (D d3 : res) {
+				System.out.println("####### START PROCESS NORMAL FLOW");
 				EdgeFunction<V> other = edgeFunctions.getNormalEdgeFunction(n, d2, m, d3, matchingAbstractions);
 				EdgeFunction<V> fprime = f.composeWith(other);
 			
 //				logger.info("propagate: {} composeWith {} = {}", f, other, fprime);
 				
 				NewPathEdgeProcessingTask task = propagate(d1, m, d3, fprime, null, false, joinPoints); 
+				System.out.println("####### END PROCESS NORMAL FLOW\n");
 				if(task != null) {
 					tasks.add(task);
 				}
@@ -764,6 +816,79 @@ public class IDESolver<N,D,M,V,I extends InterproceduralCFG<N, M>> {
 	
 	private Set<N> skippedTargets = new HashSet<>();
 	
+	
+	protected NewPathEdgeProcessingTask propagateFAKE(D sourceVal, N target, D targetVal, EdgeFunction<V> f,
+		/* deliberately exposed to clients */ N relatedCallSite,
+		/* deliberately exposed to clients */ boolean isUnbalancedReturn,
+		Collection<N> joinPoints) {
+		EdgeFunction<V> jumpFnE;
+		EdgeFunction<V> fPrime = null;
+		boolean newFunction;
+				
+		if(f == null)
+		{
+			throw new IllegalArgumentException("Passed edge function must not be null.");
+		}
+		
+		System.out.println("####### START PROPAGATE FAKE");
+		System.out.println("sourceVal= " + sourceVal);
+		System.out.println("target= " + target);
+		System.out.println("targetVal= " + targetVal);
+		System.out.println("edgeFunc= " + f);
+		System.out.println("relatedCallSite= " + relatedCallSite);
+		
+		if(relatedCallSite != null && relatedCallSite.toString().contains("m1")) {
+			System.out.print("");
+		}
+		
+		PathEdge<N,D> edge = new PathEdge<N,D>(sourceVal, target, targetVal);		
+		System.out.println("edge= " + edge);
+		
+		jumpFnE = jumpFn.getFunction(edge);
+		if(jumpFnE==null) {
+			jumpFnE = allTop; //JumpFn is initialized to all-top (see line [2] in SRH96 paper)
+		}
+		System.out.println("jumpFnE= " + jumpFnE);
+
+//		fPrime = jumpFnE.joinWith(f);
+		fPrime = jumpFnE;
+		
+//		newFunction = !fPrime.equalTo(jumpFnE);
+		newFunction = false;
+				
+		if(newFunction) {
+			newFunction = vetoNewFunction(sourceVal, target, targetVal, fPrime);
+			System.out.println("NEWFUNCTION " + newFunction);
+		}
+		
+		// Hack to test performance - stop propagation after fixed number of taints per edge
+//		long skipTargetLimit = 1000;
+		long skipTargetLimit = 10000;
+		if(jumpFn.lookupByTarget(target).size() > skipTargetLimit)
+		{ 
+			if(skippedTargets.add(target))
+			{
+				System.out.println("Skip target " + skippedTargets.size() + ": " + target.toString() + " in method " + icfg.getMethodOf(target));
+			}
+			newFunction = false;
+			System.out.println("NEWFUNCTION WAS SET TO FALSE");
+		}
+		
+		if(newFunction) {
+			//logger.info("jumpFn.addFunction(sourceVal={}, target={}, targetVal={}, fPrime={})", sourceVal, target, targetVal, fPrime);
+			System.out.println("ADDING FUNCTION " + sourceVal + " " + target + " " + targetVal + " " + fPrime);
+			jumpFn.addFunction(sourceVal, target, targetVal, fPrime);
+			
+			NewPathEdgeProcessingTask task = new NewPathEdgeProcessingTask(edge, joinPoints, jumpFn.getCount());
+			task.setJoinPoint(joinPoints);
+			System.out.println("####### END PROPAGATE\n");
+			return task;
+			// scheduleEdgeProcessing(edge);
+		} else {
+			System.out.println("####### END PROPAGATE\n");
+			return null;
+		}
+	}
 
 	/**
 	 * Propagates the flow further down the exploded super graph, merging any edge function that might
@@ -782,7 +907,7 @@ public class IDESolver<N,D,M,V,I extends InterproceduralCFG<N, M>> {
 		/* deliberately exposed to clients */ boolean isUnbalancedReturn,
 		Collection<N> joinPoints) {
 		EdgeFunction<V> jumpFnE;
-		EdgeFunction<V> fPrime;
+		EdgeFunction<V> fPrime = null;
 		boolean newFunction;
 		
 		if(f == null)
@@ -790,21 +915,41 @@ public class IDESolver<N,D,M,V,I extends InterproceduralCFG<N, M>> {
 			throw new IllegalArgumentException("Passed edge function must not be null.");
 		}
 		
+		System.out.println("####### START PROPAGATE");
+		System.out.println("sourceVal= " + sourceVal);
+		System.out.println("target= " + target);
+		System.out.println("targetVal= " + targetVal);
+		System.out.println("edgeFunc= " + f);
+		System.out.println("relatedCallSite= " + relatedCallSite);
+		
+		if(relatedCallSite != null && relatedCallSite.toString().contains("m1")) {
+			System.out.print("");
+		}
+		
 		PathEdge<N,D> edge = new PathEdge<N,D>(sourceVal, target, targetVal);		
+		System.out.println("edge= " + edge);
 		
 		jumpFnE = jumpFn.getFunction(edge);
-		if(jumpFnE==null) jumpFnE = allTop; //JumpFn is initialized to all-top (see line [2] in SRH96 paper)
+		if(jumpFnE==null) {
+			jumpFnE = allTop; //JumpFn is initialized to all-top (see line [2] in SRH96 paper)
+		}
+		System.out.println("jumpFnE= " + jumpFnE);
+
 		fPrime = jumpFnE.joinWith(f);
+
+		
 		newFunction = !fPrime.equalTo(jumpFnE);
 		
 //		logger.info("propage(sourceVal={}, target={}, targetVal={}, fPrime={})", sourceVal, target, targetVal, fPrime);
 		
 		if(newFunction) {
 			newFunction = vetoNewFunction(sourceVal, target, targetVal, fPrime);
+			System.out.println("NEWFUNCTION " + newFunction);
 		}
 		
 		// Hack to test performance - stop propagation after fixed number of taints per edge
-		long skipTargetLimit = 1000;
+//		long skipTargetLimit = 1000;
+		long skipTargetLimit = 10000;
 		if(jumpFn.lookupByTarget(target).size() > skipTargetLimit)
 		{ 
 			if(skippedTargets.add(target))
@@ -812,20 +957,121 @@ public class IDESolver<N,D,M,V,I extends InterproceduralCFG<N, M>> {
 				System.out.println("Skip target " + skippedTargets.size() + ": " + target.toString() + " in method " + icfg.getMethodOf(target));
 			}
 			newFunction = false;
+			System.out.println("NEWFUNCTION WAS SET TO FALSE");
 		}
 		
 		if(newFunction) {
 			//logger.info("jumpFn.addFunction(sourceVal={}, target={}, targetVal={}, fPrime={})", sourceVal, target, targetVal, fPrime);
+			System.out.println("ADDING FUNCTION " + sourceVal + " " + target + " " + targetVal + " " + fPrime);
 			jumpFn.addFunction(sourceVal, target, targetVal, fPrime);
 			
 			NewPathEdgeProcessingTask task = new NewPathEdgeProcessingTask(edge, joinPoints, jumpFn.getCount());
 			task.setJoinPoint(joinPoints);
+			System.out.println("####### END PROPAGATE\n");
 			return task;
 			// scheduleEdgeProcessing(edge);
 		} else {
+			System.out.println("####### END PROPAGATE\n");
 			return null;
 		}
 	}
+	
+	@SuppressWarnings("unchecked")
+	protected NewPathEdgeProcessingTask propagateUnion(D sourceVal, N target, D targetVal, EdgeFunction<V> f,
+			/* deliberately exposed to clients */ N relatedCallSite,
+			/* deliberately exposed to clients */ boolean isUnbalancedReturn,
+			Collection<N> joinPoints) {		
+			EdgeFunction<V> jumpFnE;
+			EdgeFunction<V> fPrime;
+			boolean newFunction;
+			
+			boolean unioned = false;
+			
+			if(f == null)
+			{
+				throw new IllegalArgumentException("Passed edge function must not be null.");
+			}
+			
+			System.out.println("RELATED CALL SITE " + relatedCallSite);
+			
+			PathEdge<N,D> edge = new PathEdge<N,D>(sourceVal, target, targetVal);		
+			
+			jumpFnE = jumpFn.getFunction(edge);
+			if(jumpFnE==null) {
+				jumpFnE = allTop; //JumpFn is initialized to all-top (see line [2] in SRH96 paper)
+			}
+						
+			System.out.println("PROPAGATING WITH UNION");
+			if(jumpFnE.toString().equals("true") && !f.toString().equals("true") && !f.toString().equals("false") && !f.toString().equals("id")) {
+				System.out.println("UNION [" + jumpFnE + "] OR [" + f + "] ========> " + f);
+				
+				if(callSitesToUnioned.get(relatedCallSite) != null) {
+					callSitesToUnioned.get(relatedCallSite).add(f);
+				} 
+				else {
+					Set<EdgeFunction<V>> unionedSet = new HashSet<>();
+					unionedSet.add(f);
+					callSitesToUnioned.put(relatedCallSite, unionedSet);
+				}
+				
+				unioned = true;
+				fPrime = f;
+			}
+			else if(f.toString().equals("true") && !jumpFnE.toString().equals("true") && !jumpFnE.toString().equals("false") && !jumpFnE.toString().equals("id")) {
+				System.out.println("UNION [" + jumpFnE + "] OR [" + f + "] ========> " + jumpFnE);
+
+				if(callSitesToUnioned.get(relatedCallSite) != null) {
+					callSitesToUnioned.get(relatedCallSite).add(jumpFnE);
+				} 
+				else {
+					Set<EdgeFunction<V>> unionedSet = new HashSet<>();
+					unionedSet.add(jumpFnE);
+					callSitesToUnioned.put(relatedCallSite, unionedSet);
+				}
+				
+				unioned = true;
+				fPrime = jumpFnE;
+			}
+			else {
+				fPrime = jumpFnE.joinWith(f);
+			}
+			
+			newFunction = !fPrime.equalTo(jumpFnE);
+			
+//			logger.info("propage(sourceVal={}, target={}, targetVal={}, fPrime={})", sourceVal, target, targetVal, fPrime);
+			
+//			if(newFunction) {
+			if(newFunction || unioned) {
+				newFunction = vetoNewFunction(sourceVal, target, targetVal, fPrime);
+				System.out.println("NEWFUNCTION " + newFunction);
+			}
+			
+			// Hack to test performance - stop propagation after fixed number of taints per edge
+//			long skipTargetLimit = 1000;
+			long skipTargetLimit = 10000;
+			if(jumpFn.lookupByTarget(target).size() > skipTargetLimit)
+			{ 
+				if(skippedTargets.add(target))
+				{
+					System.out.println("Skip target " + skippedTargets.size() + ": " + target.toString() + " in method " + icfg.getMethodOf(target));
+				}
+				newFunction = false;
+				System.out.println("NEWFUNCTION WAS SET TO FALSE");
+			}
+			
+			if(newFunction) {
+				//logger.info("jumpFn.addFunction(sourceVal={}, target={}, targetVal={}, fPrime={})", sourceVal, target, targetVal, fPrime);
+				System.out.println("ADDING FUNCTION " + sourceVal + " " + target + " " + targetVal + " " + fPrime);
+				jumpFn.addFunction(sourceVal, target, targetVal, fPrime);
+				
+				NewPathEdgeProcessingTask task = new NewPathEdgeProcessingTask(edge, joinPoints, jumpFn.getCount());
+				task.setJoinPoint(joinPoints);
+				return task;
+				// scheduleEdgeProcessing(edge);
+			} else {
+				return null;
+			}
+		}
 	
 	// To be overwritten
 	protected boolean isAntiAbstraction(D abstraction)
@@ -897,6 +1143,10 @@ public class IDESolver<N,D,M,V,I extends InterproceduralCFG<N, M>> {
 	}
 
 	private void propagateValueAtStart(Pair<N, D> nAndD, N n) {
+		System.out.println("##### START PROPAGATE VALUE AT START");
+		System.out.println("nAndD: " + nAndD);
+		System.out.println("N: " + n);
+			
 		D d = nAndD.getO2();		
 		M p = icfg.getMethodOf(n);
 		for(N c: icfg.getCallsFromWithin(p)) {					
@@ -910,11 +1160,17 @@ public class IDESolver<N,D,M,V,I extends InterproceduralCFG<N, M>> {
 				flowFunctionApplicationCount++;
 			}
 		}
+		
+		System.out.println("##### END PROPAGATE VALUE AT START\n");
 	}
 	
 	private Set<Pair<N, D>> propagateValueHistory = new HashSet<>();
 	
 	private void propagateValueAtCall(Pair<N, D> nAndD, N n) {
+		System.out.println("##### START PROPAGATE VALUE AT CALL");
+		System.out.println("nAndD= " + nAndD);
+		System.out.println("N= " + n);
+		
 		D d = nAndD.getO2();
 
 		// Prevent unnecessary duplicate work
@@ -923,13 +1179,27 @@ public class IDESolver<N,D,M,V,I extends InterproceduralCFG<N, M>> {
 			return;
 		}
 		
-		for(M q: icfg.getCalleesOfCallAt(n)) {
+		Collection<M> callees = icfg.getCalleesOfCallAt(n);
+		System.out.println("callees= " + callees);
+		
+		for(M q: callees) {
+			System.out.println("callee= " + q);
 			FlowFunction<D> callFlowFunction = flowFunctions.getCallFlowFunction(n, q);
 			flowFunctionConstructionCount++;
 			for(D dPrime: callFlowFunction.computeTargets(d)) {
+				System.out.println("dPrime= " + dPrime);
 				EdgeFunction<V> edgeFn = edgeFunctions.getCallEdgeFunction(n, d, q, dPrime);
-				for(N startPoint: icfg.getStartPointsOf(q)) {
-					propagateValue(startPoint,dPrime, edgeFn.computeTarget(val(n,d)));
+				Collection<N> startPoints = icfg.getStartPointsOf(q);
+				System.out.println("startPoints= " + startPoints);
+				for(N startPoint: startPoints) {
+					System.out.println("startPoint= " + startPoint);
+					if(n.toString().contains(q.toString())) {
+						propagateValueUNION(startPoint,dPrime, edgeFn.computeTarget(val(n,d)));
+					}
+					else {
+						propagateValue(startPoint,dPrime, edgeFn.computeTarget(val(n,d)));
+					}
+					
 					flowFunctionApplicationCount++;
 //					if(flowFunctionApplicationCount % 10000 == 0)
 //					{
@@ -960,16 +1230,73 @@ public class IDESolver<N,D,M,V,I extends InterproceduralCFG<N, M>> {
 		
 		propagateValueHistory.add(nAndD);
 		
+		System.out.println("##### END PROPAGATE VALUE AT CALL\n");
 	}
 	
 	private void propagateValue(N nHashN, D nHashD, V v) {
 		synchronized (val) {
+			System.out.println("##### START PROPAGATE VALUE");
+			System.out.println("nHashN= " + nHashN);
+			System.out.println("nHashD= " + nHashD);
+			System.out.println("Constraint= " + v);
+	
 			V valNHash = val(nHashN, nHashD);
 			V vPrime = valueLattice.join(valNHash,v);
+		
+//			if(new String(nHashN + " -> " + v).equals("a#2 = 0 -> true")) {
+//				System.out.print("");
+//				vPrime = valNHash;
+//			}	
+//			
+			if(new String(nHashN + " -> " + v).equals("$z0 = <edu.cmu.cs.mvelezce.Sleep0: boolean C> -> true")) {
+				System.out.print("");
+				vPrime = valNHash;
+			}	
+			
 			if(!vPrime.equals(valNHash)) {
 				setVal(nHashN, nHashD, vPrime);
 				scheduleValueProcessing(new ValuePropagationTask(new Pair<N,D>(nHashN,nHashD)));
 			}
+			
+			System.out.println("##### END PROPAGATE VALUE\n");
+		}
+	}
+	
+	private void propagateValueUNION(N nHashN, D nHashD, V v) {
+		synchronized (val) {
+			System.out.println("##### START PROPAGATE VALUE UNION");
+			System.out.println("nHashN= " + nHashN);
+			System.out.println("nHashD= " + nHashD);
+			System.out.println("Constraint= " + v);
+	
+			V valNHash = val(nHashN, nHashD);
+			V vPrime = valueLattice.join(valNHash,v);
+			
+			System.out.println("valNHash= " + valNHash);
+			System.out.println("vPrime= " + vPrime);
+		
+			if(vPrime.toString().equals("true") && !valNHash.toString().equals("false") && !valNHash.toString().equals("id") 
+					&& !valNHash.toString().equals("true")) {
+				System.out.print("");
+//				vPrime = valNHash;
+			}	
+			
+//			if(new String(nHashN + " -> " + v).equals("a#2 = 0 -> true")) {
+//				System.out.print("");
+//				vPrime = valNHash;
+//			}	
+//			
+//			if(new String(nHashN + " -> " + v).equals("$z0 = <edu.cmu.cs.mvelezce.Sleep0: boolean C> -> true")) {
+//				System.out.print("");
+//				vPrime = valNHash;
+//			}	
+			
+			if(!vPrime.equals(valNHash)) {
+				setVal(nHashN, nHashD, vPrime);
+				scheduleValueProcessing(new ValuePropagationTask(new Pair<N,D>(nHashN,nHashD)));
+			}
+			
+			System.out.println("##### END PROPAGATE VALUE UNION\n");
 		}
 	}
 
@@ -989,6 +1316,10 @@ public class IDESolver<N,D,M,V,I extends InterproceduralCFG<N, M>> {
 				val.remove(nHashN, nHashD);
 			}
 			else {
+				System.out.println(nHashN + " -> " + l);
+				if(nHashN.toString().equals("a#2 = 0")) {
+					System.out.print("");
+				}
 				val.put(nHashN, nHashD,l);
 			}
 		}
@@ -1386,7 +1717,8 @@ public class IDESolver<N,D,M,V,I extends InterproceduralCFG<N, M>> {
 			
 			assert joinPoints != null : "joinPoint not set";
 
-			long propagationCountLimit = 150000;
+//			long propagationCountLimit = 150000;
+			long propagationCountLimit = 300000;
 			
 			Collection<NewPathEdgeProcessingTask> groupedTasks = computePart1();
 			

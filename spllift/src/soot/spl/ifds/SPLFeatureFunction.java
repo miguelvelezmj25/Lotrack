@@ -34,13 +34,36 @@ public class SPLFeatureFunction implements EdgeFunction<IConstraint> {
 
 	public EdgeFunction<IConstraint> joinWith(EdgeFunction<IConstraint> otherFunction) {
 		//here we implement union/"or" semantics
-		if(otherFunction instanceof AllTop) return this;
-		if(otherFunction instanceof EdgeIdentity) return otherFunction;
+		if(otherFunction instanceof AllTop) {
+			System.out.println("JOINING >>>>> [" + features + "] OR [" + otherFunction + "] ========> " + this);
+			return this;
+		}
+		if(otherFunction instanceof EdgeIdentity) {
+			System.out.println("JOINING >>>>> [" + features + "] OR [" + otherFunction + "] ========> " + otherFunction);
+			return otherFunction;
+		}
 
 		SPLFeatureFunction other = (SPLFeatureFunction)otherFunction;
-		return new SPLFeatureFunction(features.or(other.features));
+		
+//		if(features.toString().equals("true")) {
+//			return other;
+//		}
+//		
+//		if(other.features.toString().equals("true")) {
+//			return this;
+//		}
+		
+		SPLFeatureFunction res = new SPLFeatureFunction(features.or(other.features));
+		System.out.println("JOINING >>>>> [" + features + "] OR [" + otherFunction + "] ========> " + res);
+		
+		if(new String("JOINING >>>>> [" + features + "] OR [" + otherFunction + "] ========> " + res).equals("JOINING >>>>> [!(A = 0) || !(B = 0)] OR [true] ========> true")) {
+			System.out.print("");
+		}
+		
+		
+		return res;
 	}
-	
+		
 	public boolean equalTo(EdgeFunction<IConstraint> other) {
 		if(other instanceof SPLFeatureFunction) {
 			SPLFeatureFunction function = (SPLFeatureFunction) other;

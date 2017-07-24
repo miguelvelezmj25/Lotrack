@@ -65,19 +65,35 @@ public class IFDSEdgeFunctions<D,N,SootValue> implements EdgeFunctions<Unit,D,So
 	}
 	
 	public EdgeFunction<IConstraint> getNormalEdgeFunction(Unit currStmt, D currNode, Unit succStmt, D succNode, Collection<Entry<PathEdge<Unit, D>, EdgeFunction<IConstraint>>> matchingAbstractions) {
-		return buildFlowFunction(currStmt, succStmt, currNode, succNode, zeroedFlowFunctions.getNormalFlowFunction(currStmt, succStmt), false, matchingAbstractions);
+		System.out.println("####### START NORMAL EDGE");
+		EdgeFunction<IConstraint> res = buildFlowFunction(currStmt, succStmt, currNode, succNode, zeroedFlowFunctions.getNormalFlowFunction(currStmt, succStmt), false, matchingAbstractions);
+		System.out.println("res= " + res);
+		System.out.println("####### END NORMAL EDGE\n");
+		return res;
 	}
 
 	public EdgeFunction<IConstraint> getCallEdgeFunction(Unit callStmt, D srcNode, SootMethod destinationMethod,D destNode) {
-		return buildFlowFunction(callStmt, destinationMethod, srcNode, destNode, zeroedFlowFunctions.getCallFlowFunction(callStmt, destinationMethod), true, null);
+		System.out.println("####### START CALL EDGE");
+		EdgeFunction<IConstraint> res = buildFlowFunction(callStmt, destinationMethod, srcNode, destNode, zeroedFlowFunctions.getCallFlowFunction(callStmt, destinationMethod), true, null);
+		System.out.println("res= " + res);
+		System.out.println("####### END CALL EDGE\n");
+		return res;
 	}
 
 	public EdgeFunction<IConstraint> getReturnEdgeFunction(Unit callSite, SootMethod calleeMethod, Unit exitStmt,D exitNode, Unit returnSite,D retNode) {
-		return buildFlowFunction(exitStmt, returnSite, exitNode, retNode, zeroedFlowFunctions.getReturnFlowFunction(callSite, calleeMethod, exitStmt, returnSite), false, null);
+		System.out.println("####### START RETURN EDGE");
+		EdgeFunction<IConstraint> res = buildFlowFunction(exitStmt, returnSite, exitNode, retNode, zeroedFlowFunctions.getReturnFlowFunction(callSite, calleeMethod, exitStmt, returnSite), false, null);
+		System.out.println("res= " + res);
+		System.out.println("####### END RETURN EDGE\n");
+		return res;
 	}
 
-	public EdgeFunction<IConstraint> getCallToReturnEdgeFunction(Unit callSite, D callNode, Unit returnSite, D returnSideNode) {
-		return buildFlowFunction(callSite, returnSite, callNode, returnSideNode, zeroedFlowFunctions.getCallToReturnFlowFunction(callSite, returnSite), false, null);
+	public EdgeFunction<IConstraint> getCallToReturnEdgeFunction(Unit callSite, D callNode, Unit returnSite, D returnSideNode) {		
+		System.out.println("####### START CALL TO RETURN EDGE");
+		EdgeFunction<IConstraint> res = buildFlowFunction(callSite, returnSite, callNode, returnSideNode, zeroedFlowFunctions.getCallToReturnFlowFunction(callSite, returnSite), false, null);
+		System.out.println("res= " + res);
+		System.out.println("####### END CALL TO RETURN EDGE\n");
+		return res;
 	}
 	
 	private EdgeFunction<IConstraint> buildFlowFunction(Unit src, 
@@ -87,8 +103,38 @@ public class IFDSEdgeFunctions<D,N,SootValue> implements EdgeFunctions<Unit,D,So
 															   FlowFunction<D> originalFlowFunction, 
 															   boolean isCall,
 															   Collection<Entry<PathEdge<Unit, D>, EdgeFunction<IConstraint>>> matchingAbstractions) {
+		
+		System.out.println("src= " + src);
+		System.out.println("src.lineNumber= " + src.getJavaSourceStartLineNumber());
+		
+		if(src.getJavaSourceStartLineNumber() == 14) {
+			System.out.print("");
+		}
+		
+		System.out.println("successor= " + successor);
+		System.out.println("successor.lineNumber= " + successor.getJavaSourceStartLineNumber());
+		System.out.println("srcNode= " + srcNode);
+		System.out.println("tgtNode= " + tgtNode); 
+//		System.out.println("originalFlowFunction= " + originalFlowFunction);
+		System.out.println("isCall= " + isCall);
+		System.out.println("matchingAbstractions= " + matchingAbstractions);
+		
 		Collection<ConstraintSet> featureSets = helper.getFeaturesForFlow(src, successor, srcNode, tgtNode, icfg.getMethodOf(src), ifdsProblem.zeroValue(), matchingAbstractions);		
 		
+		if(featureSets == null || featureSets.isEmpty()) {
+			System.out.println("FeatureSets= empty");
+		}
+		else {
+			System.out.print("FeatureSets= ");
+			
+			for(ConstraintSet constraintSet : featureSets) {
+				System.out.print("Base= " + constraintSet.getBase() + " Extension= " + constraintSet.getExtension() 
+					+ " IncompleteFix= " + constraintSet.isImcompleteFix());
+			}
+			
+			System.out.println();
+		}
+				
 		if(featureSets == null) {
 			return EdgeIdentity.v();
 		}
@@ -203,7 +249,7 @@ public class IFDSEdgeFunctions<D,N,SootValue> implements EdgeFunctions<Unit,D,So
 	//		if(inprecise) {
 	//			neg = srcFeatures;
 	//		}
-						
+
 			IConstraint lifted = pos.or(neg);
 			
 			if(srcFeatures != null) {

@@ -21,6 +21,9 @@ public class ConstraintTrue implements IConstraint {
 	@Override
 	public IConstraint or(IConstraint other) {
 		//true || other == true
+		if(!this.toString().equals(other.toString())) {
+			System.out.println("ALWAYS TRUE [" + this + "] || [" + other + "] ========> " + this);
+		}
 		return this;
 	}		
 

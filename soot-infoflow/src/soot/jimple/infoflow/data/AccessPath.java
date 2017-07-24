@@ -236,6 +236,7 @@ public class AccessPath implements Cloneable {
 			this.fieldTypes = null;
 		}
 		
+//		System.out.println("Type mismatch. Type was " + this.baseType + ", value was: " + (this.value == null ? null : this.value.getType()));
 		// Type checks
 		assert this.value == null || !(!(this.baseType instanceof ArrayType)
 				&& !(this.baseType instanceof RefType && ((RefType) this.baseType).getSootClass().getName().equals("java.lang.Object")) 

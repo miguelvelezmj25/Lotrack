@@ -182,15 +182,29 @@ public class Constraint implements Cloneable, IConstraint {
 //			// TODO Auto-generated catch block
 //			e.printStackTrace();
 //		}
-		
+					
 		String z3Constraint = null;
 		// Optimization: A || A <=> A
 		if(Z3Constraint.equals(other.getZ3Constraint()))
 		{
 			z3Constraint = Z3Constraint;
-		} else {
+		}
+//		else if(this.Z3Constraint.equals("true") && other.getZ3Constraint().contains("or")) {
+//			System.out.println("OR SPECIAL >>>>> [" + this + "] OR [" + other + "] ========> " + other);
+//			return other;
+//		}
+//		else if(other.getZ3Constraint().equals("true") && this.Z3Constraint.contains("or")) {
+//			System.out.println("OR SPECIAL >>>>> [" + this + "] OR [" + other + "] ========> " + this);
+//			return this;
+//		}
+//		else {
+//			z3Constraint = this.toString() + " || " + other.toString();
+//		}
+		else {
 			z3Constraint = CachedZ3Solver.solve(new SolverOperation(Z3Constraint, other.getZ3Constraint(), Operator.OR));
 		}
+
+		
 //		synchronized (FACTORY) {
 //			if(other==trueValue()) return other;
 //			if(other==falseValue()) return this;
@@ -201,7 +215,15 @@ public class Constraint implements Cloneable, IConstraint {
 //			}
 //			else {
 //				return new Constraint(disjunction, z3Constraint);
-		return new Constraint(z3Constraint);
+		
+		IConstraint result = new Constraint(z3Constraint);
+		System.out.println("OR >>>>> [" + this + "] OR [" + other + "] ========> " + result);
+		
+		if(new String("OR >>>>> [" + this + "] OR [" + other + "] ========> " + result).equals("OR >>>>> [!(A = 0) || !(B = 0)] OR [true] ========> true")) {
+			System.out.print("");
+		}
+		
+		return result;
 //			}
 //		}
 		
@@ -218,6 +240,8 @@ public class Constraint implements Cloneable, IConstraint {
 //		synchronized (FACTORY) {
 			if(other==trueValue()) return falseValue();
 			if(other==falseValue()) return trueValue();
+			
+		
 //			
 //			BDD negation = other.getBDD().not();
 //			if(negation.isOne()) 
@@ -292,6 +316,13 @@ public class Constraint implements Cloneable, IConstraint {
 				} else {
 					result = new Constraint(z3Constraint);
 				}
+								
+				if(new String("AND >>>>> [" + this + "] AND [" + other + "] ========> " + result).equals("AND >>>>> [true] AND [!(A = 0) || !(B = 0)] ========> !(A = 0) || !(B = 0)")) {
+					System.out.print("");
+//					result = new ConstraintFalse();
+				}
+				
+				System.out.println("AND >>>>> [" + this + "] AND [" + other + "] ========> " + result);
 				
 				return result;
 				
@@ -308,6 +339,10 @@ public class Constraint implements Cloneable, IConstraint {
 //		}
 //		
 		String resultZ3 = CachedZ3Solver.getPrettyprinted(Z3Constraint);
+		
+		if(resultZ3.contains("!")) {
+			System.out.print("");
+		}
 		
 //		if(!result.equals(resultZ3))
 //		{
