@@ -35,11 +35,11 @@ public class SPLFeatureFunction implements EdgeFunction<IConstraint> {
 	public EdgeFunction<IConstraint> joinWith(EdgeFunction<IConstraint> otherFunction) {
 		//here we implement union/"or" semantics
 		if(otherFunction instanceof AllTop) {
-			System.out.println("JOINING >>>>> [" + features + "] OR [" + otherFunction + "] ========> " + this);
+			//System.out.println("JOINING >>>>> [" + features + "] OR [" + otherFunction + "] ========> " + this);
 			return this;
 		}
 		if(otherFunction instanceof EdgeIdentity) {
-			System.out.println("JOINING >>>>> [" + features + "] OR [" + otherFunction + "] ========> " + otherFunction);
+			//System.out.println("JOINING >>>>> [" + features + "] OR [" + otherFunction + "] ========> " + otherFunction);
 			return otherFunction;
 		}
 
@@ -54,10 +54,10 @@ public class SPLFeatureFunction implements EdgeFunction<IConstraint> {
 //		}
 		
 		SPLFeatureFunction res = new SPLFeatureFunction(features.or(other.features));
-		System.out.println("JOINING >>>>> [" + features + "] OR [" + otherFunction + "] ========> " + res);
+		//System.out.println("JOINING >>>>> [" + features + "] OR [" + otherFunction + "] ========> " + res);
 		
 		if(new String("JOINING >>>>> [" + features + "] OR [" + otherFunction + "] ========> " + res).equals("JOINING >>>>> [!(A = 0) || !(B = 0)] OR [true] ========> true")) {
-			System.out.print("");
+			//System.out.print("");
 		}
 		
 		

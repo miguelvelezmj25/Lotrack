@@ -2454,8 +2454,8 @@ public class LoadTimeTests extends AbstractBenchmark {
 	}	
 	
 	@Test
-    public void sleep0() throws IOException {	
-        final String sep = System.getProperty("path.separator");
+    public void sleep0() throws IOException {			
+		final String sep = System.getProperty("path.separator");
         String name = "sleep0";
 	    	File f = new File("/Users/mvelezce/Documents/Programming/Java/Projects/performance-mapper-evaluation/original/dummy/out/production/dummy/");
 	    	
@@ -2480,6 +2480,7 @@ public class LoadTimeTests extends AbstractBenchmark {
 		epoints.add("<edu.cmu.cs.mvelezce.Sleep0: void main(java.lang.String[])>");
 		
 		checkConstraints(infoflow, epoints, name);
+				
 		
 //		try(MongoLoader loader = new MongoLoader()) { 
 //			loader.saveResults(infoflow, name, "/Users/mvelezce/Documents/Programming/Java/Projects/");

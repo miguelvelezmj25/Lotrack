@@ -579,7 +579,6 @@ public class CachedZ3Solver {
 	{
 		String pretty;
 		try {
-			System.out.println(expression);
 			pretty = prettyprinted.get(expression).get();
 		} catch (InterruptedException | ExecutionException e) {
 			throw new RuntimeException(e);

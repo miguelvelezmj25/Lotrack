@@ -22,7 +22,7 @@ public class ConstraintTrue implements IConstraint {
 	public IConstraint or(IConstraint other) {
 		//true || other == true
 		if(!this.toString().equals(other.toString())) {
-			System.out.println("ALWAYS TRUE [" + this + "] || [" + other + "] ========> " + this);
+			//System.out.println("ALWAYS TRUE [" + this + "] || [" + other + "] ========> " + this);
 		}
 		return this;
 	}		
