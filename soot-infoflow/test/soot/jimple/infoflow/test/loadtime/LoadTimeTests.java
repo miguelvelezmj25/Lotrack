@@ -102,7 +102,7 @@ import soot.tagkit.JimpleLineNumberTag;
 import soot.tagkit.Tag;
 
 
-@BenchmarkOptions(benchmarkRounds = 3, warmupRounds = 2)
+@BenchmarkOptions(benchmarkRounds = 1, warmupRounds = 0)
 public class LoadTimeTests extends AbstractBenchmark {
 	private final Logger logger = LoggerFactory.getLogger(getClass());
 	
@@ -269,6 +269,86 @@ public class LoadTimeTests extends AbstractBenchmark {
 			IEntryPointCreator entryPointCreator,
 			List<String> entryPoints, ISourceSinkManager sourcesSinks*/
 
+	@Test
+    public void sleep0() throws IOException {			
+		final String sep = System.getProperty("path.separator");
+        String name = "sleep0";
+	    	File f = new File("/Users/mvelezce/Documents/Programming/Java/Projects/performance-mapper-evaluation/original/dummy/out/production/dummy/");
+	    	
+	    	assertTrue(f.exists());
+	
+	    	appPath = f.getCanonicalPath();
+	    	libPath = System.getProperty("java.home") + File.separator + "lib" + File.separator + "rt.jar";
+	    	
+		LoadTimeInfoflow result = new LoadTimeInfoflow();
+		result.setCallgraphAlgorithm(CallgraphAlgorithm.CHA);
+		
+		EasyTaintWrapper easyWrapper = new EasyTaintWrapper(new File("EasyTaintWrapperSource.txt"));
+		result.setTaintWrapper(easyWrapper);
+			
+	    	Infoflow.setDebug(true);
+	    	LoadTimeConfigForTest testConfig = new LoadTimeConfigForTest();
+	    	result.setSootConfig(testConfig);
+	    	
+	    	LoadTimeInfoflow infoflow = result;
+    	
+		List<String> epoints = new ArrayList<String>();
+		epoints.add("<edu.cmu.cs.mvelezce.Sleep0: void main(java.lang.String[])>");
+		
+		checkConstraints(infoflow, epoints, name);
+				
+		
+//		try(MongoLoader loader = new MongoLoader()) { 
+//			loader.saveResults(infoflow, name, "/Users/mvelezce/Documents/Programming/Java/Projects/");
+//		}
+		
+//		Config conf = ConfigFactory.load().getConfig(name);
+//		try(TestHelper testHelper = new TestHelper()) {
+//			int constraintsChecked = testHelper.checkResults(conf, name);
+//			System.out.println(constraintsChecked + " Constraints checked.");
+//		}
+	}	
+	
+	@Test
+    public void sleep31() throws IOException {			
+		final String sep = System.getProperty("path.separator");
+        String name = "sleep31";
+	    	File f = new File("/Users/mvelezce/Documents/Programming/Java/Projects/performance-mapper-evaluation/original/dummy/out/production/dummy/");
+	    	
+	    	assertTrue(f.exists());
+	
+	    	appPath = f.getCanonicalPath();
+	    	libPath = System.getProperty("java.home") + File.separator + "lib" + File.separator + "rt.jar";
+	    	
+		LoadTimeInfoflow result = new LoadTimeInfoflow();
+		result.setCallgraphAlgorithm(CallgraphAlgorithm.CHA);
+		
+		EasyTaintWrapper easyWrapper = new EasyTaintWrapper(new File("EasyTaintWrapperSource.txt"));
+		result.setTaintWrapper(easyWrapper);
+			
+	    	Infoflow.setDebug(true);
+	    	LoadTimeConfigForTest testConfig = new LoadTimeConfigForTest();
+	    	result.setSootConfig(testConfig);
+	    	
+	    	LoadTimeInfoflow infoflow = result;
+    	
+		List<String> epoints = new ArrayList<String>();
+		epoints.add("<edu.cmu.cs.mvelezce.Sleep31: void main(java.lang.String[])>");
+		
+		checkConstraints(infoflow, epoints, name);
+				
+		
+//		try(MongoLoader loader = new MongoLoader()) { 
+//			loader.saveResults(infoflow, name, "/Users/mvelezce/Documents/Programming/Java/Projects/");
+//		}
+		
+//		Config conf = ConfigFactory.load().getConfig(name);
+//		try(TestHelper testHelper = new TestHelper()) {
+//			int constraintsChecked = testHelper.checkResults(conf, name);
+//			System.out.println(constraintsChecked + " Constraints checked.");
+//		}
+	}	
+	
 	@Test
 	//@Repeat( times = 20 )
     public void test01() throws IOException {

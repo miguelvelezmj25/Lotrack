@@ -455,7 +455,8 @@ public class LoadTimeHelperImpl implements LoadTimeHelper<Abstraction> {
 					} 
 				}
 				
-				boolean isComplete = completeCheck.equals(Constraint.trueValue());
+//				boolean isComplete = completeCheck.equals(Constraint.trueValue());
+				boolean isComplete = true;
 				
 				// If we only have incomplete concrete values, we create an artficial negation of these taints
 				if(!isComplete)
@@ -567,7 +568,8 @@ public class LoadTimeHelperImpl implements LoadTimeHelper<Abstraction> {
 					} 
 				}
 				
-				boolean isComplete = completeCheck.equals(Constraint.trueValue()) || (zeroSplFeatureFunction != null && completeCheck.equals(zeroSplFeatureFunction.getFeatures()));
+//				boolean isComplete = completeCheck.equals(Constraint.trueValue()) || (zeroSplFeatureFunction != null && completeCheck.equals(zeroSplFeatureFunction.getFeatures()));
+				boolean isComplete = true;
 				
 				// If we only have incomplete concrete values, we create an artficial negation of these taints
 				if(!isComplete)

@@ -79,7 +79,9 @@ public class MongoLoader implements AutoCloseable {
 		mongoClient = new MongoClient();
 		db = mongoClient.getDB("loadtime");
 		jimpleCollection = db.getCollection("JimpleFiles");
-		
+		System.out.println("clearing");
+		clearResult("loadtime");		
+		System.out.println("cleared");		
 	}
 
 	public void saveResults(LoadTimeInfoflow infoflow, String collectionName,

@@ -929,7 +929,12 @@ public class IDESolver<N,D,M,V,I extends InterproceduralCFG<N, M>> {
 			for(D dPrime: callFlowFunction.computeTargets(d)) {
 				EdgeFunction<V> edgeFn = edgeFunctions.getCallEdgeFunction(n, d, q, dPrime);
 				for(N startPoint: icfg.getStartPointsOf(q)) {
-					propagateValue(startPoint,dPrime, edgeFn.computeTarget(val(n,d)));
+					if(n.toString().contains(q.toString())) {
+						propagateValueUNION(startPoint,dPrime, edgeFn.computeTarget(val(n,d)));
+					}
+					else {
+						propagateValue(startPoint,dPrime, edgeFn.computeTarget(val(n,d)));
+					}
 					flowFunctionApplicationCount++;
 //					if(flowFunctionApplicationCount % 10000 == 0)
 //					{
@@ -960,6 +965,44 @@ public class IDESolver<N,D,M,V,I extends InterproceduralCFG<N, M>> {
 		
 		propagateValueHistory.add(nAndD);
 		
+	}
+	
+	private void propagateValueUNION(N nHashN, D nHashD, V v) {
+		synchronized (val) {
+			System.out.println("##### START PROPAGATE VALUE UNION");
+			System.out.println("nHashN= " + nHashN);
+			System.out.println("nHashD= " + nHashD);
+			System.out.println("Constraint= " + v);
+	
+			V valNHash = val(nHashN, nHashD);
+			V vPrime = valueLattice.join(valNHash,v);
+			
+			System.out.println("valNHash= " + valNHash);
+			System.out.println("vPrime= " + vPrime);
+		
+			if(vPrime.toString().equals("true") && !valNHash.toString().equals("false") && !valNHash.toString().equals("id") 
+					&& !valNHash.toString().equals("true")) {
+				System.out.print("");
+				vPrime = valNHash;
+			}	
+			
+//			if(new String(nHashN + " -> " + v).equals("a#2 = 0 -> true")) {
+//				System.out.print("");
+//				vPrime = valNHash;
+//			}	
+//			
+//			if(new String(nHashN + " -> " + v).equals("$z0 = <edu.cmu.cs.mvelezce.Sleep0: boolean C> -> true")) {
+//				System.out.print("");
+//				vPrime = valNHash;
+//			}	
+			
+			if(!vPrime.equals(valNHash)) {
+				setVal(nHashN, nHashD, vPrime);
+				scheduleValueProcessing(new ValuePropagationTask(new Pair<N,D>(nHashN,nHashD)));
+			}
+			
+			System.out.println("##### END PROPAGATE VALUE UNION\n");
+		}
 	}
 	
 	private void propagateValue(N nHashN, D nHashD, V v) {
