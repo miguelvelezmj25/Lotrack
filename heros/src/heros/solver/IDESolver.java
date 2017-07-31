@@ -1092,7 +1092,7 @@ public class IDESolver<N,D,M,V,I extends InterproceduralCFG<N, M>> {
 				System.out.println(nHashN + " -> " + l);
 				val.put(nHashN, nHashD,l);
 			}
-			System.out.println("##### END SET VAL");
+			System.out.println("##### END SET VAL\n");
 		}
 	}
 
