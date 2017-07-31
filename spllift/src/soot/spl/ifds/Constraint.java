@@ -203,7 +203,7 @@ public class Constraint implements Cloneable, IConstraint {
 //				return new Constraint(disjunction, z3Constraint);
 		
 		IConstraint result = new Constraint(z3Constraint);
-		System.out.println("OR >>>>> [" + this + "] || [" + other + "] ========> " + result);
+		System.out.println("OR >>>>> [" + this + "] OR [" + other + "] ========> " + result);
 		
 		return result;
 //			}
@@ -249,11 +249,11 @@ public class Constraint implements Cloneable, IConstraint {
 	public synchronized IConstraint and(IConstraint other) {		
 //		synchronized (FACTORY) {
 			if(other==trueValue()) { 
-				System.out.println("AND >>>>> [" + this + "] ^ [" + other + "] ========> " + this);
+				System.out.println("AND >>>>> [" + this + "] AND [" + other + "] ========> " + this);
 				return this;
 			}
 			if(other==falseValue()) {
-				System.out.println("AND >>>>> [" + this + "] ^ [" + other + "] ========> " + other);
+				System.out.println("AND >>>>> [" + this + "] AND [" + other + "] ========> " + other);
 				return other;
 			}
 			// A && A <=> A
@@ -303,7 +303,7 @@ public class Constraint implements Cloneable, IConstraint {
 					result = new Constraint(z3Constraint);
 				}
 				
-				System.out.println("AND >>>>> [" + this + "] ^ [" + other + "] ========> " + result);
+				System.out.println("AND >>>>> [" + this + "] AND [" + other + "] ========> " + result);
 				
 				return result;
 				

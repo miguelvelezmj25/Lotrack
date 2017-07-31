@@ -18,14 +18,14 @@ public class ConstraintFalse implements IConstraint {
 	@Override
 	public IConstraint and(IConstraint other) {
 		//false && other = false
-		System.out.println("AND ALWAYS THIS [" + this + "] ^ [" + other + "] ========> " + this);
+		System.out.println("AND ALWAYS THIS [" + this + "] AND [" + other + "] ========> " + this);
 		return this;
 	}		
 
 	@Override
 	public IConstraint or(IConstraint other) {
 		//false || other == other
-		System.out.println("OR ALWAYS OTHER [" + this + "] || [" + other + "] ========> " + this);
+		System.out.println("OR ALWAYS OTHER [" + this + "] OR [" + other + "] ========> " + this);
 		return other;
 	}		
 
