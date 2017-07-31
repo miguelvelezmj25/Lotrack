@@ -188,7 +188,14 @@ public class Constraint implements Cloneable, IConstraint {
 		if(Z3Constraint.equals(other.getZ3Constraint()))
 		{
 			z3Constraint = Z3Constraint;
-		} else {
+		} 
+//		else if(Z3Constraint.equals("true")) {
+//			z3Constraint = other.getZ3Constraint();
+//		}
+//		else if(other.getZ3Constraint().equals("true")) {
+//			z3Constraint = Z3Constraint;
+//		}		
+		else {
 			z3Constraint = CachedZ3Solver.solve(new SolverOperation(Z3Constraint, other.getZ3Constraint(), Operator.OR));
 		}
 //		synchronized (FACTORY) {

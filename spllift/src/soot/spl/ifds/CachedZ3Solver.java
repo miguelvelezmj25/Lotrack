@@ -386,14 +386,19 @@ public class CachedZ3Solver {
 
 			
 //			Tactic tactic = ctx.mkTactic("simplify");
+			Tactic simplify = ctx.mkTactic("simplify");
 			Tactic tacticSimplify = ctx.mkTactic("ctx-solver-simplify");
 			Tactic ctxSimplify = ctx.mkTactic("ctx-simplify");
 			Tactic splitClause = ctx.mkTactic("split-clause");
 			Tactic skip = ctx.skip();
 			Tactic orElse = ctx.orElse(splitClause, skip);
 			Tactic propagateValues = ctx.mkTactic("propagate-values");
-			
-			Tactic tactic = ctx.andThen(tacticSimplify, ctxSimplify, orElse, propagateValues);
+		
+//			Tactic tactic = ctx.andThen(tacticSimplify, ctxSimplify, orElse, propagateValues);
+//			Tactic tactic = ctx.andThen(simplify, orElse, propagateValues);
+//			Tactic tactic = ctx.andThen(simplify, tacticSimplify, orElse, propagateValues);
+//			Tactic tactic = ctx.andThen(simplify, ctxSimplify, orElse, propagateValues);
+			Tactic tactic = ctx.andThen(simplify, tacticSimplify, ctxSimplify, orElse, propagateValues);
 			
 			// Overwrite tactic
 			if(operation.getOperator() == Operator.CNF)

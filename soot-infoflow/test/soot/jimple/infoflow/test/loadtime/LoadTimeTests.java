@@ -2532,7 +2532,7 @@ public class LoadTimeTests extends AbstractBenchmark {
 	}
 	
 	@Test
-    public void union02() throws IOException {	
+    public void union02() throws IOException {		
         final String sep = System.getProperty("path.separator");
         String name = "union02";
 	    	File f = new File("/Users/mvelezce/Documents/Programming/Java/Projects/performance-mapper-evaluation/original/dummy/out/production/dummy/");
