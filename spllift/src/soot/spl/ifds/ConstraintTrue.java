@@ -15,12 +15,14 @@ public class ConstraintTrue implements IConstraint {
 	@Override
 	public IConstraint and(IConstraint other) {
 		//true && other = other
+		System.out.println("AND ALWAYS OTHER [" + this + "] ^ [" + other + "] ========> " + other);
 		return other;
 	}		
 
 	@Override
 	public IConstraint or(IConstraint other) {
 		//true || other == true
+		System.out.println("OR ALWAYS THIS [" + this + "] || [" + other + "] ========> " + this);
 		return this;
 	}		
 
