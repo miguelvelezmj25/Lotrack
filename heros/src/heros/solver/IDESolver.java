@@ -491,10 +491,10 @@ public class IDESolver<N,D,M,V,I extends InterproceduralCFG<N, M>> {
 					// @TODO Changes fourth parameter -> check again
 					
 					
-					if(f.toString().equals("true") && sCalledProcN.toString().equals("<edu.cmu.cs.mvelezce.Sleep0: void m1()>")) {
+					if(f.toString().equals("true") && sCalledProcN.toString().contains("m1")) {
 //						task = propagateFAKE(d3, sP, d3, f, n, false, joinPoints); //line 15
-						task = propagate(d3, sP, d3, f, n, false, joinPoints); //line 15
-//						task = null;
+//						task = propagate(d3, sP, d3, f, n, false, joinPoints); //line 15
+						task = null;
 					}
 					else {					
 						task = propagate(d3, sP, d3, f, n, false, joinPoints); //line 15
