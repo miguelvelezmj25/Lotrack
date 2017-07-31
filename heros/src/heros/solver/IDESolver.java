@@ -492,9 +492,9 @@ public class IDESolver<N,D,M,V,I extends InterproceduralCFG<N, M>> {
 					
 					
 					if(f.toString().equals("true") && sCalledProcN.toString().contains("m1")) {
-//						task = propagateFAKE(d3, sP, d3, f, n, false, joinPoints); //line 15
+						task = propagateUNION(d3, sP, d3, f, n, false, joinPoints); //line 15
 //						task = propagate(d3, sP, d3, f, n, false, joinPoints); //line 15
-						task = null;
+//						task = null;
 					}
 					else {					
 						task = propagate(d3, sP, d3, f, n, false, joinPoints); //line 15
@@ -899,6 +899,85 @@ public class IDESolver<N,D,M,V,I extends InterproceduralCFG<N, M>> {
 			return null;
 		}
 	}
+	
+	protected NewPathEdgeProcessingTask propagateUNION(D sourceVal, N target, D targetVal, EdgeFunction<V> f,
+			/* deliberately exposed to clients */ N relatedCallSite,
+			/* deliberately exposed to clients */ boolean isUnbalancedReturn,
+			Collection<N> joinPoints) {
+			EdgeFunction<V> jumpFnE;
+			EdgeFunction<V> fPrime;
+			boolean newFunction;
+			
+			if(f == null)
+			{
+				throw new IllegalArgumentException("Passed edge function must not be null.");
+			}
+			
+			System.out.println("####### START PROPAGATE");
+			System.out.println("sourceVal= " + sourceVal);
+			System.out.println("target= " + target);
+			System.out.println("targetVal= " + targetVal);
+			System.out.println("edgeFunc= " + f);
+			System.out.println("relatedCallSite= " + relatedCallSite);
+			
+			PathEdge<N,D> edge = new PathEdge<N,D>(sourceVal, target, targetVal);		
+			System.out.println("edge= " + edge);
+			
+			jumpFnE = jumpFn.getFunction(edge);
+			if(jumpFnE==null) {
+				jumpFnE = allTop; //JumpFn is initialized to all-top (see line [2] in SRH96 paper)
+			}
+			System.out.println("jumpFnE= " + jumpFnE);
+			
+			if(jumpFnE.toString().equals("true") && relatedCallSite != null && relatedCallSite.toString().contains("m1")) {
+				System.out.println("UNION [" + jumpFnE + "] OR [" + f + "] ========> " + f);
+				fPrime = f;
+			}
+			else if(f.toString().equals("true") && relatedCallSite != null && relatedCallSite.toString().contains("m1")) {
+				System.out.println("UNION [" + jumpFnE + "] OR [" + f + "] ========> " + jumpFnE);
+				fPrime = jumpFnE;
+			}
+			else {
+				fPrime = jumpFnE.joinWith(f);
+			}
+			
+			newFunction = !fPrime.equalTo(jumpFnE);
+			
+//			logger.info("propage(sourceVal={}, target={}, targetVal={}, fPrime={})", sourceVal, target, targetVal, fPrime);
+			
+			if(newFunction) {
+				newFunction = vetoNewFunction(sourceVal, target, targetVal, fPrime);
+				System.out.println("NEWFUNCTION " + newFunction);
+			}
+			
+			// Hack to test performance - stop propagation after fixed number of taints per edge
+//			long skipTargetLimit = 1000;
+			long skipTargetLimit = 10000;
+			if(jumpFn.lookupByTarget(target).size() > skipTargetLimit)
+			{ 
+				if(skippedTargets.add(target))
+				{
+					System.out.println("Skip target " + skippedTargets.size() + ": " + target.toString() + " in method " + icfg.getMethodOf(target));
+				}
+				newFunction = false;
+				System.out.println("NEWFUNCTION WAS SET TO FALSE");
+			}
+			
+			if(newFunction) {
+				//logger.info("jumpFn.addFunction(sourceVal={}, target={}, targetVal={}, fPrime={})", sourceVal, target, targetVal, fPrime);
+				System.out.println("ADDING FUNCTION " + sourceVal + " " + target + " " + targetVal + " " + fPrime);
+				jumpFn.addFunction(sourceVal, target, targetVal, fPrime);
+				
+				NewPathEdgeProcessingTask task = new NewPathEdgeProcessingTask(edge, joinPoints, jumpFn.getCount());
+				task.setJoinPoint(joinPoints);
+				System.out.println("####### END PROPAGATE\n");
+				return task;
+				// scheduleEdgeProcessing(edge);
+			} else {
+				System.out.println("####### END PROPAGATE\n");
+				return null;
+			}
+		}
 	
 	// To be overwritten
 	protected boolean isAntiAbstraction(D abstraction)
