@@ -25,7 +25,7 @@ public class ConstraintFalse implements IConstraint {
 	@Override
 	public IConstraint or(IConstraint other) {
 		//false || other == other
-		System.out.println("OR ALWAYS OTHER [" + this + "] OR [" + other + "] ========> " + this);
+		System.out.println("OR ALWAYS OTHER [" + this + "] OR [" + other + "] ========> " + other);
 		return other;
 	}		
 
