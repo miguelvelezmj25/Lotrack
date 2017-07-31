@@ -2493,6 +2493,85 @@ public class LoadTimeTests extends AbstractBenchmark {
 	}
 	
 	@Test
+    public void union01() throws IOException {	
+        final String sep = System.getProperty("path.separator");
+        String name = "union01";
+	    	File f = new File("/Users/mvelezce/Documents/Programming/Java/Projects/performance-mapper-evaluation/original/dummy/out/production/dummy/");
+	    	
+	    	assertTrue(f.exists());
+	
+	    	appPath = f.getCanonicalPath();
+	    	libPath = System.getProperty("java.home") + File.separator + "lib" + File.separator + "rt.jar";
+	    	
+		LoadTimeInfoflow result = new LoadTimeInfoflow();
+		result.setCallgraphAlgorithm(CallgraphAlgorithm.CHA);
+		
+		EasyTaintWrapper easyWrapper = new EasyTaintWrapper(new File("EasyTaintWrapperSource.txt"));
+		result.setTaintWrapper(easyWrapper);
+			
+	    	Infoflow.setDebug(true);
+	    	LoadTimeConfigForTest testConfig = new LoadTimeConfigForTest();
+	    	result.setSootConfig(testConfig);
+	    	
+	    	LoadTimeInfoflow infoflow = result;
+    	
+		List<String> epoints = new ArrayList<String>();
+		epoints.add("<edu.cmu.cs.mvelezce.Union01: void main(java.lang.String[])>");
+		
+		checkConstraints(infoflow, epoints, name);
+		
+//		try(MongoLoader loader = new MongoLoader()) { 
+//			loader.saveResults(infoflow, name, "/Users/mvelezce/Documents/Programming/Java/Projects/");
+//		}
+		
+//		Config conf = ConfigFactory.load().getConfig(name);
+//		try(TestHelper testHelper = new TestHelper()) {
+//			int constraintsChecked = testHelper.checkResults(conf, name);
+//			System.out.println(constraintsChecked + " Constraints checked.");
+//		}
+	}
+	
+	@Test
+    public void union02() throws IOException {	
+        final String sep = System.getProperty("path.separator");
+        String name = "union02";
+	    	File f = new File("/Users/mvelezce/Documents/Programming/Java/Projects/performance-mapper-evaluation/original/dummy/out/production/dummy/");
+	    	
+	    	assertTrue(f.exists());
+	
+	    	appPath = f.getCanonicalPath();
+	    	libPath = System.getProperty("java.home") + File.separator + "lib" + File.separator + "rt.jar";
+	    	
+		LoadTimeInfoflow result = new LoadTimeInfoflow();
+		result.setCallgraphAlgorithm(CallgraphAlgorithm.CHA);
+		
+		EasyTaintWrapper easyWrapper = new EasyTaintWrapper(new File("EasyTaintWrapperSource.txt"));
+		result.setTaintWrapper(easyWrapper);
+			
+	    	Infoflow.setDebug(true);
+	    	LoadTimeConfigForTest testConfig = new LoadTimeConfigForTest();
+	    	result.setSootConfig(testConfig);
+	    	
+	    	LoadTimeInfoflow infoflow = result;
+    	
+		List<String> epoints = new ArrayList<String>();
+		epoints.add("<edu.cmu.cs.mvelezce.Union02: void main(java.lang.String[])>");
+		
+		checkConstraints(infoflow, epoints, name);
+		
+//		try(MongoLoader loader = new MongoLoader()) { 
+//			loader.saveResults(infoflow, name, "/Users/mvelezce/Documents/Programming/Java/Projects/");
+//		}
+		
+//		Config conf = ConfigFactory.load().getConfig(name);
+//		try(TestHelper testHelper = new TestHelper()) {
+//			int constraintsChecked = testHelper.checkResults(conf, name);
+//			System.out.println(constraintsChecked + " Constraints checked.");
+//		}
+	}
+	
+	
+	@Test
     public void union1() throws IOException {	
         final String sep = System.getProperty("path.separator");
         String name = "union1";
