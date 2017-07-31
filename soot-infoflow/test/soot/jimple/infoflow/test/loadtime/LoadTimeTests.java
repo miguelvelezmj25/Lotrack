@@ -2454,9 +2454,9 @@ public class LoadTimeTests extends AbstractBenchmark {
 	}	
 	
 	@Test
-    public void sleep0() throws IOException {			
+    public void sleep31() throws IOException {			
 		final String sep = System.getProperty("path.separator");
-        String name = "sleep0";
+        String name = "sleep31";
 	    	File f = new File("/Users/mvelezce/Documents/Programming/Java/Projects/performance-mapper-evaluation/original/dummy/out/production/dummy/");
 	    	
 	    	assertTrue(f.exists());
@@ -2477,7 +2477,7 @@ public class LoadTimeTests extends AbstractBenchmark {
 	    	LoadTimeInfoflow infoflow = result;
     	
 		List<String> epoints = new ArrayList<String>();
-		epoints.add("<edu.cmu.cs.mvelezce.Sleep0: void main(java.lang.String[])>");
+		epoints.add("<edu.cmu.cs.mvelezce.Sleep31: void main(java.lang.String[])>");
 		
 		checkConstraints(infoflow, epoints, name);
 				
