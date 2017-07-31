@@ -1,42 +1,42 @@
 [main] INFO org.mongodb.driver.cluster - Cluster created with settings {hosts=[127.0.0.1:27017], mode=SINGLE, requiredClusterType=UNKNOWN, serverSelectionTimeout='30000 ms', maxWaitQueueSize=500}
 [main] INFO org.mongodb.driver.cluster - No server chosen by ReadPreferenceServerSelector{readPreference=primary} from cluster description ClusterDescription{type=UNKNOWN, connectionMode=SINGLE, all=[ServerDescription{address=127.0.0.1:27017, type=UNKNOWN, state=CONNECTING}]}. Waiting for 30000 ms before timing out
-[cluster-ClusterId{value='597fc0ee4b31652eaeec3c29', description='null'}-127.0.0.1:27017] INFO org.mongodb.driver.connection - Opened connection [connectionId{localValue:1, serverValue:1410}] to 127.0.0.1:27017
-[cluster-ClusterId{value='597fc0ee4b31652eaeec3c29', description='null'}-127.0.0.1:27017] INFO org.mongodb.driver.cluster - Monitor thread successfully connected to server with description ServerDescription{address=127.0.0.1:27017, type=STANDALONE, state=CONNECTED, ok=true, version=ServerVersion{versionList=[3, 4, 2]}, minWireVersion=0, maxWireVersion=5, maxDocumentSize=16777216, roundTripTimeNanos=435978}
-[main] INFO org.mongodb.driver.connection - Opened connection [connectionId{localValue:2, serverValue:1411}] to 127.0.0.1:27017
+[cluster-ClusterId{value='597fc2054b31652f9d3afeaf', description='null'}-127.0.0.1:27017] INFO org.mongodb.driver.connection - Opened connection [connectionId{localValue:1, serverValue:1475}] to 127.0.0.1:27017
+[cluster-ClusterId{value='597fc2054b31652f9d3afeaf', description='null'}-127.0.0.1:27017] INFO org.mongodb.driver.cluster - Monitor thread successfully connected to server with description ServerDescription{address=127.0.0.1:27017, type=STANDALONE, state=CONNECTED, ok=true, version=ServerVersion{versionList=[3, 4, 2]}, minWireVersion=0, maxWireVersion=5, maxDocumentSize=16777216, roundTripTimeNanos=504623}
+[main] INFO org.mongodb.driver.connection - Opened connection [connectionId{localValue:2, serverValue:1476}] to 127.0.0.1:27017
 [main] INFO soot.jimple.infoflow.taintWrappers.EasyTaintWrapper - Loaded wrapper entries for 49 classes and 9 exclusions.
 [main] INFO soot.jimple.infoflow.LoadTimeInfoflow - Resetting Soot...
 [main] INFO soot.jimple.infoflow.LoadTimeInfoflow - Basic class loading done.
-[main] INFO soot.jimple.infoflow.LoadTimeInfoflow - Callgraph has 166 edges
+[main] INFO soot.jimple.infoflow.LoadTimeInfoflow - Callgraph has 182 edges
 [main] INFO soot.jimple.infoflow.LoadTimeInfoflow - Looking for sources.
 [main] INFO org.mongodb.driver.cluster - Cluster created with settings {hosts=[127.0.0.1:27017], mode=SINGLE, requiredClusterType=UNKNOWN, serverSelectionTimeout='30000 ms', maxWaitQueueSize=500}
 [main] INFO org.mongodb.driver.cluster - No server chosen by ReadPreferenceServerSelector{readPreference=primary} from cluster description ClusterDescription{type=UNKNOWN, connectionMode=SINGLE, all=[ServerDescription{address=127.0.0.1:27017, type=UNKNOWN, state=CONNECTING}]}. Waiting for 30000 ms before timing out
-[cluster-ClusterId{value='597fc0f24b31652eaeec3c2a', description='null'}-127.0.0.1:27017] INFO org.mongodb.driver.connection - Opened connection [connectionId{localValue:3, serverValue:1412}] to 127.0.0.1:27017
-[cluster-ClusterId{value='597fc0f24b31652eaeec3c2a', description='null'}-127.0.0.1:27017] INFO org.mongodb.driver.cluster - Monitor thread successfully connected to server with description ServerDescription{address=127.0.0.1:27017, type=STANDALONE, state=CONNECTED, ok=true, version=ServerVersion{versionList=[3, 4, 2]}, minWireVersion=0, maxWireVersion=5, maxDocumentSize=16777216, roundTripTimeNanos=455621}
-[main] INFO org.mongodb.driver.connection - Opened connection [connectionId{localValue:4, serverValue:1413}] to 127.0.0.1:27017
-[main] INFO org.mongodb.driver.connection - Closed connection [connectionId{localValue:4, serverValue:1413}] to 127.0.0.1:27017 because the pool has been closed.
+[cluster-ClusterId{value='597fc2094b31652f9d3afeb0', description='null'}-127.0.0.1:27017] INFO org.mongodb.driver.connection - Opened connection [connectionId{localValue:3, serverValue:1477}] to 127.0.0.1:27017
+[cluster-ClusterId{value='597fc2094b31652f9d3afeb0', description='null'}-127.0.0.1:27017] INFO org.mongodb.driver.cluster - Monitor thread successfully connected to server with description ServerDescription{address=127.0.0.1:27017, type=STANDALONE, state=CONNECTED, ok=true, version=ServerVersion{versionList=[3, 4, 2]}, minWireVersion=0, maxWireVersion=5, maxDocumentSize=16777216, roundTripTimeNanos=553204}
+[main] INFO org.mongodb.driver.connection - Opened connection [connectionId{localValue:4, serverValue:1478}] to 127.0.0.1:27017
+[main] INFO org.mongodb.driver.connection - Closed connection [connectionId{localValue:4, serverValue:1478}] to 127.0.0.1:27017 because the pool has been closed.
 [main] INFO soot.jimple.infoflow.LoadTimeInfoflow - Source lookup done, found 1 sources.
 [main] WARN soot.jimple.infoflow.LoadTimeInfoflow - Using flow-insensitive alias tracking, results may be imprecise
 [main] INFO soot.jimple.infoflow.LoadTimeInfoflow - Creating SPL solver...
 [main] INFO soot.jimple.infoflow.LoadTimeInfoflow - Starting SPL solver...
 [main] INFO heros.solver.IDESolver - add PerformanceMeter
-[ForkJoinPool-1-worker-1] INFO heros.solver.IDESolver - propagationCount 52
+[ForkJoinPool-1-worker-1] INFO heros.solver.IDESolver - propagationCount 79
 [main] INFO soot.jimple.infoflow.LoadTimeInfoflow - IDE Executor finished
 [main] INFO org.mongodb.driver.cluster - Cluster created with settings {hosts=[127.0.0.1:27017], mode=SINGLE, requiredClusterType=UNKNOWN, serverSelectionTimeout='30000 ms', maxWaitQueueSize=500}
 [main] INFO org.mongodb.driver.cluster - No server chosen by ReadPreferenceServerSelector{readPreference=primary} from cluster description ClusterDescription{type=UNKNOWN, connectionMode=SINGLE, all=[ServerDescription{address=127.0.0.1:27017, type=UNKNOWN, state=CONNECTING}]}. Waiting for 30000 ms before timing out
-[cluster-ClusterId{value='597fc0f24b31652eaeec3c2b', description='null'}-127.0.0.1:27017] INFO org.mongodb.driver.connection - Opened connection [connectionId{localValue:5, serverValue:1414}] to 127.0.0.1:27017
-[cluster-ClusterId{value='597fc0f24b31652eaeec3c2b', description='null'}-127.0.0.1:27017] INFO org.mongodb.driver.cluster - Monitor thread successfully connected to server with description ServerDescription{address=127.0.0.1:27017, type=STANDALONE, state=CONNECTED, ok=true, version=ServerVersion{versionList=[3, 4, 2]}, minWireVersion=0, maxWireVersion=5, maxDocumentSize=16777216, roundTripTimeNanos=339098}
-[main] INFO org.mongodb.driver.connection - Opened connection [connectionId{localValue:6, serverValue:1415}] to 127.0.0.1:27017
-[main] INFO org.mongodb.driver.connection - Closed connection [connectionId{localValue:6, serverValue:1415}] to 127.0.0.1:27017 because the pool has been closed.
+[cluster-ClusterId{value='597fc20b4b31652f9d3afeb1', description='null'}-127.0.0.1:27017] INFO org.mongodb.driver.connection - Opened connection [connectionId{localValue:5, serverValue:1479}] to 127.0.0.1:27017
+[cluster-ClusterId{value='597fc20b4b31652f9d3afeb1', description='null'}-127.0.0.1:27017] INFO org.mongodb.driver.cluster - Monitor thread successfully connected to server with description ServerDescription{address=127.0.0.1:27017, type=STANDALONE, state=CONNECTED, ok=true, version=ServerVersion{versionList=[3, 4, 2]}, minWireVersion=0, maxWireVersion=5, maxDocumentSize=16777216, roundTripTimeNanos=330726}
+[main] INFO org.mongodb.driver.connection - Opened connection [connectionId{localValue:6, serverValue:1480}] to 127.0.0.1:27017
+[main] INFO org.mongodb.driver.connection - Closed connection [connectionId{localValue:6, serverValue:1480}] to 127.0.0.1:27017 because the pool has been closed.
 [main] INFO org.mongodb.driver.cluster - Cluster created with settings {hosts=[127.0.0.1:27017], mode=SINGLE, requiredClusterType=UNKNOWN, serverSelectionTimeout='30000 ms', maxWaitQueueSize=500}
 [main] INFO org.mongodb.driver.cluster - No server chosen by ReadPreferenceServerSelector{readPreference=primary} from cluster description ClusterDescription{type=UNKNOWN, connectionMode=SINGLE, all=[ServerDescription{address=127.0.0.1:27017, type=UNKNOWN, state=CONNECTING}]}. Waiting for 30000 ms before timing out
-[cluster-ClusterId{value='597fc0f24b31652eaeec3cba', description='null'}-127.0.0.1:27017] INFO org.mongodb.driver.connection - Opened connection [connectionId{localValue:7, serverValue:1416}] to 127.0.0.1:27017
-[cluster-ClusterId{value='597fc0f24b31652eaeec3cba', description='null'}-127.0.0.1:27017] INFO org.mongodb.driver.cluster - Monitor thread successfully connected to server with description ServerDescription{address=127.0.0.1:27017, type=STANDALONE, state=CONNECTED, ok=true, version=ServerVersion{versionList=[3, 4, 2]}, minWireVersion=0, maxWireVersion=5, maxDocumentSize=16777216, roundTripTimeNanos=367088}
-[main] INFO org.mongodb.driver.connection - Opened connection [connectionId{localValue:8, serverValue:1417}] to 127.0.0.1:27017
-[pool-7-thread-2] INFO org.mongodb.driver.connection - Opened connection [connectionId{localValue:9, serverValue:1418}] to 127.0.0.1:27017
-[pool-7-thread-1] INFO org.mongodb.driver.connection - Opened connection [connectionId{localValue:11, serverValue:1420}] to 127.0.0.1:27017
-[pool-7-thread-4] INFO org.mongodb.driver.connection - Opened connection [connectionId{localValue:10, serverValue:1419}] to 127.0.0.1:27017
-[main] INFO org.mongodb.driver.connection - Closed connection [connectionId{localValue:8, serverValue:1417}] to 127.0.0.1:27017 because the pool has been closed.
-[main] INFO org.mongodb.driver.connection - Closed connection [connectionId{localValue:9, serverValue:1418}] to 127.0.0.1:27017 because the pool has been closed.
-[main] INFO org.mongodb.driver.connection - Closed connection [connectionId{localValue:11, serverValue:1420}] to 127.0.0.1:27017 because the pool has been closed.
-[main] INFO org.mongodb.driver.connection - Closed connection [connectionId{localValue:10, serverValue:1419}] to 127.0.0.1:27017 because the pool has been closed.
-[main] INFO org.mongodb.driver.connection - Closed connection [connectionId{localValue:2, serverValue:1411}] to 127.0.0.1:27017 because the pool has been closed.
+[cluster-ClusterId{value='597fc20b4b31652f9d3affa3', description='null'}-127.0.0.1:27017] INFO org.mongodb.driver.connection - Opened connection [connectionId{localValue:7, serverValue:1481}] to 127.0.0.1:27017
+[cluster-ClusterId{value='597fc20b4b31652f9d3affa3', description='null'}-127.0.0.1:27017] INFO org.mongodb.driver.cluster - Monitor thread successfully connected to server with description ServerDescription{address=127.0.0.1:27017, type=STANDALONE, state=CONNECTED, ok=true, version=ServerVersion{versionList=[3, 4, 2]}, minWireVersion=0, maxWireVersion=5, maxDocumentSize=16777216, roundTripTimeNanos=325623}
+[main] INFO org.mongodb.driver.connection - Opened connection [connectionId{localValue:8, serverValue:1482}] to 127.0.0.1:27017
+[pool-7-thread-4] INFO org.mongodb.driver.connection - Opened connection [connectionId{localValue:11, serverValue:1483}] to 127.0.0.1:27017
+[pool-7-thread-1] INFO org.mongodb.driver.connection - Opened connection [connectionId{localValue:9, serverValue:1484}] to 127.0.0.1:27017
+[pool-7-thread-3] INFO org.mongodb.driver.connection - Opened connection [connectionId{localValue:10, serverValue:1485}] to 127.0.0.1:27017
+[main] INFO org.mongodb.driver.connection - Closed connection [connectionId{localValue:11, serverValue:1483}] to 127.0.0.1:27017 because the pool has been closed.
+[main] INFO org.mongodb.driver.connection - Closed connection [connectionId{localValue:9, serverValue:1484}] to 127.0.0.1:27017 because the pool has been closed.
+[main] INFO org.mongodb.driver.connection - Closed connection [connectionId{localValue:10, serverValue:1485}] to 127.0.0.1:27017 because the pool has been closed.
+[main] INFO org.mongodb.driver.connection - Closed connection [connectionId{localValue:8, serverValue:1482}] to 127.0.0.1:27017 because the pool has been closed.
+[main] INFO org.mongodb.driver.connection - Closed connection [connectionId{localValue:2, serverValue:1476}] to 127.0.0.1:27017 because the pool has been closed.

@@ -1099,7 +1099,15 @@ public class IDESolver<N,D,M,V,I extends InterproceduralCFG<N, M>> {
 				System.out.println("startPoints= " + startPoints);
 				for(N startPoint: startPoints) {
 					System.out.println("startPoint= " + startPoint);
-					propagateValue(startPoint,dPrime, edgeFn.computeTarget(val(n,d)));
+					
+					if(n.toString().contains(q.toString())) {
+ 						propagateValueUNION(startPoint,dPrime, edgeFn.computeTarget(val(n,d)));
+ 					}
+ 					else {
+ 						propagateValue(startPoint,dPrime, edgeFn.computeTarget(val(n,d)));
+ 					}
+					
+//					propagateValue(startPoint,dPrime, edgeFn.computeTarget(val(n,d)));
 					flowFunctionApplicationCount++;
 //					if(flowFunctionApplicationCount % 10000 == 0)
 //					{
@@ -1150,6 +1158,40 @@ public class IDESolver<N,D,M,V,I extends InterproceduralCFG<N, M>> {
 			System.out.println("##### END PROPAGATE VALUE\n");
 		}
 	}
+	
+	private void propagateValueUNION(N nHashN, D nHashD, V v) {
+		synchronized (val) {
+			System.out.println("##### START PROPAGATE VALUE UNION");
+			System.out.println("nHashN= " + nHashN);
+			System.out.println("nHashD= " + nHashD);
+			System.out.println("Constraint= " + v);
+	
+			V valNHash = val(nHashN, nHashD);
+			V vPrime = valueLattice.join(valNHash,v);
+			
+			System.out.println("valNHash= " + valNHash);
+			System.out.println("vPrime= " + vPrime);
+		
+//			if(vPrime.toString().equals("true") && !valNHash.toString().equals("false") && !valNHash.toString().equals("id") 
+//					&& !valNHash.toString().equals("true")) {
+//				//System.out.print("");
+//				vPrime = valNHash;
+//			}		
+			
+			if(nHashN.toString().equals("staticinvoke <java.lang.Thread: void sleep(long)>(4L)") 
+					&& vPrime.toString().equals("true")) {
+				vPrime = valNHash;
+			}
+			
+			if(!vPrime.equals(valNHash)) {
+				setVal(nHashN, nHashD, vPrime);
+				scheduleValueProcessing(new ValuePropagationTask(new Pair<N,D>(nHashN,nHashD)));
+			}
+			
+			System.out.println("##### END PROPAGATE VALUE UNION\n");
+		}
+	}
+
 
 	private V val(N nHashN, D nHashD){ 
 		V l;
