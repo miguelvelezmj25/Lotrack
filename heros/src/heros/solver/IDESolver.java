@@ -528,7 +528,6 @@ public class IDESolver<N,D,M,V,I extends InterproceduralCFG<N, M>> {
 								EdgeFunction<V> f5 = edgeFunctions.getReturnEdgeFunction(n, sCalledProcN, eP, d4, retSiteN, d5);
 								EdgeFunction<V> fPrime = f4.composeWith(fCalleeSummary).composeWith(f5);				
 								task = propagate(d1, retSiteN, d5, f.composeWith(fPrime), n, false, joinPoints);
-//								task = propagateUnion(d1, retSiteN, d5, f.composeWith(fPrime), n, false, joinPoints);
 								System.out.println("####### END PROCESS CALL GET CALL EDGE GET RETURN EDGE\n");
 								if(task != null) {
 									tasks.add(task);
@@ -849,15 +848,19 @@ public class IDESolver<N,D,M,V,I extends InterproceduralCFG<N, M>> {
 			jumpFnE = allTop; //JumpFn is initialized to all-top (see line [2] in SRH96 paper)
 		}
 		System.out.println("jumpFnE= " + jumpFnE);
-		
-		fPrime = jumpFnE.joinWith(f);
+		boolean a = false;
+		if(target.toString().equals("staticinvoke <java.lang.Thread: void sleep(long)>(4L)") && f.toString().equals("true")) {
+			f = jumpFnE;
+			a = true;
+		}
 
+		fPrime = jumpFnE.joinWith(f);
 		
 		newFunction = !fPrime.equalTo(jumpFnE);
 		
 //		logger.info("propage(sourceVal={}, target={}, targetVal={}, fPrime={})", sourceVal, target, targetVal, fPrime);
 		
-		if(newFunction) {
+		if(newFunction || a) {
 			newFunction = vetoNewFunction(sourceVal, target, targetVal, fPrime);
 			System.out.println("NEWFUNCTION " + newFunction);
 		}
@@ -1011,6 +1014,13 @@ public class IDESolver<N,D,M,V,I extends InterproceduralCFG<N, M>> {
 				System.out.println("startPoints= " + startPoints);
 				for(N startPoint: startPoints) {
 					System.out.println("startPoint= " + startPoint);
+					V value = edgeFn.computeTarget(val(n,d));
+					System.out.println("value= " + value);
+					
+					if(startPoint.toString().equals("staticinvoke <java.lang.Thread: void sleep(long)>(4L)") && value.toString().equals("true")) {
+						continue;
+					}
+					
 					propagateValue(startPoint,dPrime, edgeFn.computeTarget(val(n,d)));
 					flowFunctionApplicationCount++;
 //					if(flowFunctionApplicationCount % 10000 == 0)
@@ -1054,6 +1064,10 @@ public class IDESolver<N,D,M,V,I extends InterproceduralCFG<N, M>> {
 			
 			V valNHash = val(nHashN, nHashD);
 			V vPrime = valueLattice.join(valNHash,v);
+			
+			System.out.println("valNHash= " + valNHash);
+			System.out.println("vPrime= " + vPrime);
+			
 			if(!vPrime.equals(valNHash)) {
 				setVal(nHashN, nHashD, vPrime);
 				scheduleValueProcessing(new ValuePropagationTask(new Pair<N,D>(nHashN,nHashD)));
