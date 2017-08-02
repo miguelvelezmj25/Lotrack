@@ -488,18 +488,9 @@ public class IDESolver<N,D,M,V,I extends InterproceduralCFG<N, M>> {
 				//for each result node of the call-flow function
 				for(D d3: res) {
 					//create initial self-loop
-					// @TODO Changes fourth parameter -> check again
+					// @TODO Changes fourth parameter -> check again				
+					task = propagate(d3, sP, d3, f, n, false, joinPoints); //line 15
 					
-					
-					if(f.toString().equals("true") && sCalledProcN.toString().equals("<edu.cmu.cs.mvelezce.Sleep0: void m1()>")) {
-//						task = propagateFAKE(d3, sP, d3, f, n, false, joinPoints); //line 15
-						task = propagate(d3, sP, d3, f, n, false, joinPoints); //line 15
-//						task = null;
-					}
-					else {					
-						task = propagate(d3, sP, d3, f, n, false, joinPoints); //line 15
-//						task = propagateUnion(d3, sP, d3, f, n, false, joinPoints); //line 15
-					}
 					System.out.println("task " + task);
 					if(task != null) {
 						tasks.add(task);
@@ -858,7 +849,7 @@ public class IDESolver<N,D,M,V,I extends InterproceduralCFG<N, M>> {
 			jumpFnE = allTop; //JumpFn is initialized to all-top (see line [2] in SRH96 paper)
 		}
 		System.out.println("jumpFnE= " + jumpFnE);
-
+		
 		fPrime = jumpFnE.joinWith(f);
 
 		
