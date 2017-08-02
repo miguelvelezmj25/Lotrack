@@ -26,13 +26,13 @@ public class SPLFeatureFunction implements EdgeFunction<IConstraint> {
 
 	public EdgeFunction<IConstraint> composeWith(EdgeFunction<IConstraint> secondFunction) {
 		if(secondFunction instanceof EdgeIdentity || secondFunction instanceof AllTop) {
-			System.out.println("COMPOSING >>>>> [" + features + "] OR [" + secondFunction + "] ========> " + this);
+			System.out.println("COMPOSING >>>>> [" + features + "] AND [" + secondFunction + "] ========> " + this);
 			return this;
 		}
 		
 		SPLFeatureFunction other = (SPLFeatureFunction)secondFunction;
 		SPLFeatureFunction res = new SPLFeatureFunction(features.and(other.features));
-		System.out.println("COMPOSING >>>>> [" + features + "] OR [" + secondFunction + "] ========> " + res);
+		System.out.println("COMPOSING >>>>> [" + features + "] AND [" + secondFunction + "] ========> " + res);
 		
 		return new SPLFeatureFunction(features.and(other.features));
 	}
