@@ -850,6 +850,12 @@ public class IDESolver<N,D,M,V,I extends InterproceduralCFG<N, M>> {
 		System.out.println("jumpFnE= " + jumpFnE);
 		boolean a = false;
 		if(target.toString().equals("staticinvoke <java.lang.Thread: void sleep(long)>(4L)") && f.toString().equals("true")) {
+			System.out.println("NOT PROPAGATING TRUE");
+			f = jumpFnE;
+			a = true;
+		}
+		else if(target.toString().equals("x := @parameter0: boolean") && f.toString().equals("true")) {
+			System.out.println("NOT PROPAGATING TRUE");
 			f = jumpFnE;
 			a = true;
 		}
@@ -1015,12 +1021,7 @@ public class IDESolver<N,D,M,V,I extends InterproceduralCFG<N, M>> {
 				for(N startPoint: startPoints) {
 					System.out.println("startPoint= " + startPoint);
 					V value = edgeFn.computeTarget(val(n,d));
-					System.out.println("value= " + value);
-					
-					if(startPoint.toString().equals("staticinvoke <java.lang.Thread: void sleep(long)>(4L)") && value.toString().equals("true")) {
-						continue;
-					}
-					
+					System.out.println("value= " + value);					
 					propagateValue(startPoint,dPrime, edgeFn.computeTarget(val(n,d)));
 					flowFunctionApplicationCount++;
 //					if(flowFunctionApplicationCount % 10000 == 0)
@@ -1063,11 +1064,22 @@ public class IDESolver<N,D,M,V,I extends InterproceduralCFG<N, M>> {
 			System.out.println("Constraint= " + v);
 			
 			V valNHash = val(nHashN, nHashD);
-			V vPrime = valueLattice.join(valNHash,v);
-			
 			System.out.println("valNHash= " + valNHash);
-			System.out.println("vPrime= " + vPrime);
 			
+			if(nHashN.toString().equals("staticinvoke <java.lang.Thread: void sleep(long)>(4L)") 
+					&& (v.toString().equals("true") || valNHash.toString().equals("true"))) {
+				System.out.println("NOT PROPAGATING VALUE");
+				return;
+			}
+			else if(nHashN.toString().equals("x := @parameter0: boolean") 
+					&& (v.toString().equals("true") || valNHash.toString().equals("true"))) {
+				System.out.println("NOT PROPAGATING VALUE");
+				return;
+			}
+			
+			V vPrime = valueLattice.join(valNHash,v);
+			System.out.println("vPrime= " + vPrime);
+						
 			if(!vPrime.equals(valNHash)) {
 				setVal(nHashN, nHashD, vPrime);
 				scheduleValueProcessing(new ValuePropagationTask(new Pair<N,D>(nHashN,nHashD)));
